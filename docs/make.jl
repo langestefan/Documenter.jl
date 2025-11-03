@@ -37,7 +37,7 @@ end
 makedocs(
     modules = [Documenter, DocumenterTools, DocumenterShowcase],
     remotes = Dict(
-        DocumenterTools => (Documenter.Remote("GitHub", "JuliaDocs/DocumenterTools.jl"), Documenter.Remote("GitHub", "JuliaDocs/DocumenterTools.jl")),
+        DocumenterTools => (Documenter.Remotes.GitHub("JuliaDocs", "DocumenterTools.jl"), Documenter.Remotes.GitHub("JuliaDocs", "DocumenterTools.jl")),
     ),
     format = if "pdf" in ARGS
         Documenter.LaTeX(platform = "docker")
