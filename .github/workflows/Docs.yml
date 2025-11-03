@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - stay-on-page-with-workflow
     paths:
       - "docs/**"
       - "src/**"
@@ -17,6 +18,7 @@ on:
       - "src/**"
       - "*.toml"
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 concurrency:
   # Skip intermediate builds: always.
