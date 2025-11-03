@@ -15,7 +15,7 @@ Changelog.generate(
     Changelog.Documenter(),
     joinpath(@__DIR__, "..", "CHANGELOG.md"),
     joinpath(@__DIR__, "src", "release-notes.md");
-    repo = "JuliaDocs/Documenter.jl",
+    repo="JuliaDocs/Documenter.jl",
 )
 
 linkcheck_ignore = [
@@ -35,35 +35,32 @@ if get(ENV, "GITHUB_ACTIONS", nothing) == "true"
 end
 
 makedocs(
-    modules = [Documenter, DocumenterTools, DocumenterShowcase],
-    remotes = Dict(
-        DocumenterTools => (Documenter.Remotes.GitHub("JuliaDocs", "DocumenterTools.jl"), Documenter.Remotes.GitHub("JuliaDocs", "DocumenterTools.jl")),
-    ),
-    format = if "pdf" in ARGS
-        Documenter.LaTeX(platform = "docker")
+    modules=[Documenter, DocumenterTools, DocumenterShowcase],
+    format=if "pdf" in ARGS
+        Documenter.LaTeX(platform="docker")
     else
         Documenter.HTML(
             # Use clean URLs, unless built as a "local" build
-            prettyurls = !("local" in ARGS),
-            canonical = "https://documenter.juliadocs.org/stable/",
-            assets = ["assets/favicon.ico"],
-            analytics = "UA-136089579-2",
-            highlights = ["yaml"],
-            ansicolor = true,
-            size_threshold_ignore = ["release-notes.md"],
-            inventory_version = Documenter.DOCUMENTER_VERSION,
+            prettyurls=!("local" in ARGS),
+            canonical="https://documenter.juliadocs.org/stable/",
+            assets=["assets/favicon.ico"],
+            analytics="UA-136089579-2",
+            highlights=["yaml"],
+            ansicolor=true,
+            size_threshold_ignore=["release-notes.md"],
+            inventory_version=Documenter.DOCUMENTER_VERSION,
         )
     end,
-    build = ("pdf" in ARGS) ? "build-pdf" : "build",
-    debug = ("pdf" in ARGS),
-    sitename = "Documenter.jl",
-    authors = "Michael Hatherly, Morten Piibeleht, and contributors.",
-    linkcheck = "linkcheck" in ARGS,
-    linkcheck_ignore = linkcheck_ignore,
-    pages = [
+    build=("pdf" in ARGS) ? "build-pdf" : "build",
+    debug=("pdf" in ARGS),
+    sitename="Documenter.jl",
+    authors="Michael Hatherly, Morten Piibeleht, and contributors.",
+    linkcheck="linkcheck" in ARGS,
+    linkcheck_ignore=linkcheck_ignore,
+    pages=[
         "Home" => "index.md",
         "Manual" => Any[
-            "Guide" => "man/guide.md",
+            "Guide"=>"man/guide.md",
             "man/examples.md",
             "man/syntax.md",
             "man/doctests.md",
@@ -73,9 +70,9 @@ makedocs(
         ],
         "showcase.md",
         "Reference" => Any[
-            "Public API" => "lib/public.md",
+            "Public API"=>"lib/public.md",
             "lib/remote-links.md",
-            "Semantic versioning" => "lib/semver.md",
+            "Semantic versioning"=>"lib/semver.md",
         ],
         "Developers" => [
             "contributing.md",
@@ -87,8 +84,8 @@ makedocs(
         ],
         "release-notes.md",
     ],
-    warnonly = ("strict=false" in ARGS),
-    doctest = ("doctest=only" in ARGS) ? :only : true,
+    warnonly=("strict=false" in ARGS),
+    doctest=("doctest=only" in ARGS) ? :only : true,
 )
 
 if "pdf" in ARGS
@@ -105,15 +102,15 @@ if "pdf" in ARGS
         end
     end
     deploydocs(
-        repo = "github.com/JuliaDocs/Documenter.jl.git",
-        target = "pdf/build-pdf/commit",
-        branch = "gh-pages-pdf",
-        forcepush = true,
+        repo="github.com/JuliaDocs/Documenter.jl.git",
+        target="pdf/build-pdf/commit",
+        branch="gh-pages-pdf",
+        forcepush=true,
     )
 else
     deploydocs(
-        repo = "github.com/JuliaDocs/Documenter.jl.git",
-        target = "build",
-        push_preview = true,
+        repo="github.com/JuliaDocs/Documenter.jl.git",
+        target="build",
+        push_preview=true,
     )
 end
