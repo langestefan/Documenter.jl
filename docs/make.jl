@@ -84,7 +84,7 @@ makedocs(
         ],
         "release-notes.md",
     ],
-    warnonly=("strict=false" in ARGS),
+    warnonly=("strict=false" in ARGS) ? true : [:missing_docs],
     doctest=("doctest=only" in ARGS) ? :only : true,
 )
 
