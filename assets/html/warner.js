@@ -10,74 +10,59 @@ function maybeAddWarning() {
     return;
   }
 
-  // Current version is not a version number, so we can't tell if it's the newest version. Abort.
+  // Abort if current version is not a semantic version (e.g., "v1.16")
   if (!/v(\d+\.)*\d+/.test(window.DOCUMENTER_CURRENT_VERSION)) {
     return;
   }
 
-  // Current version is newest version, so no need to add a warning.
+  // No warning if this is the newest version
   if (window.DOCUMENTER_NEWEST === window.DOCUMENTER_CURRENT_VERSION) {
     return;
   }
 
-  // Add a noindex meta tag (unless one exists) so that search engines don't index this version of the docs.
+  // Add <meta name="robots" content="noindex"> if not already present
   if (document.body.querySelector('meta[name="robots"]') === null) {
     const meta = document.createElement("meta");
     meta.name = "robots";
     meta.content = "noindex";
-
     document.getElementsByTagName("head")[0].appendChild(meta);
   }
 
+  // Create main overlay
   const div = document.createElement("div");
-  // Base class is added by default
   div.classList.add("warning-overlay-base");
+
   const closer = document.createElement("button");
   closer.classList.add("outdated-warning-closer", "delete");
-  closer.addEventListener("click", function () {
-    document.body.removeChild(div);
-  });
+  closer.addEventListener("click", () => document.body.removeChild(div));
 
-  // try to stay on the same page when switching versions
-  // get the current page path relative to the version root
-  var current_page = window.location.pathname;
+  // Determine current page and base URLs
+  const currentPage = window.location.pathname;
+  let docUrl = window.location.href;
+  if (docUrl.endsWith("/")) docUrl += "index.html";
 
-  // resolve the documenterBaseURL to an absolute path
-  // documenterBaseURL is a relative path (usually "."), so we need to resolve it
-  // we need to resolve it from the document's URL, which might be a directory
-  var doc_url = window.location.href;
-  // if the URL is a directory (ends with /), append index.html for proper resolution
-  if (doc_url.endsWith("/")) {
-    doc_url = doc_url + "index.html";
-  }
-  var base_url_absolute = new URL(documenterBaseURL, doc_url).pathname;
-  if (!base_url_absolute.endsWith("/")) {
-    base_url_absolute = base_url_absolute + "/";
-  }
+  // Resolve documenterBaseURL (relative path) to absolute
+  const baseUrlAbsolute = new URL(
+    window.documenterBaseURL,
+    docUrl
+  ).pathname.replace(/\/?$/, "/");
 
-  // extract the page path after the version directory
-  // e.g., if we're on /dev/man/guide.html, we want "man/guide.html"
-  var page_path = "";
-  if (current_page.startsWith(base_url_absolute)) {
-    page_path = current_page.substring(base_url_absolute.length);
-  }
+  // Extract path relative to version root
+  const pagePath = currentPage.startsWith(baseUrlAbsolute)
+    ? currentPage.substring(baseUrlAbsolute.length)
+    : "";
 
-  // construct target_href (base stable URL) as an absolute URL
-  var target_href_relative =
-    window.documenterBaseURL + "/../" + window.DOCUMENTER_STABLE + "/";
-  var target_href = new URL(target_href_relative, doc_url).href;
+  // Construct target base URL for the stable (or dev) version
+  const targetHrefRelative = `${window.documenterBaseURL}/../${window.DOCUMENTER_STABLE}/`;
+  const targetHref = new URL(targetHrefRelative, docUrl).href;
 
-  // construct the target URL with the same page path
-  var target_url = target_href;
-  if (page_path && page_path !== "" && page_path !== "index.html") {
-    // remove trailing slash from target_href if present
-    if (target_url.endsWith("/")) {
-      target_url = target_url.slice(0, -1);
-    }
-    target_url = target_url + "/" + page_path;
+  // Construct full target URL preserving page path
+  let targetUrl = targetHref;
+  if (pagePath && pagePath !== "" && pagePath !== "index.html") {
+    targetUrl = targetUrl.replace(/\/$/, "") + "/" + pagePath;
   }
 
-  // Determine if this is a development version or an older release
+  // Determine warning type
   let warningMessage = "";
   if (window.DOCUMENTER_IS_DEV_VERSION === true) {
     div.classList.add("dev-warning-overlay");
@@ -89,26 +74,25 @@ function maybeAddWarning() {
       "This documentation is for an <strong>older version</strong> that may be missing recent changes.<br>";
   }
 
-  // create link element with click handler that checks if page exists
+  // Create the “Go to stable version” link
   const link = document.createElement("a");
-  link.href = target_href;
+  link.href = targetHref;
   link.textContent =
     "Click here to go to the documentation for the latest stable release.";
-  link.addEventListener("click", function (event) {
+
+  link.addEventListener("click", (event) => {
     event.preventDefault();
-    // check if the target page exists, fallback to homepage if it doesn't
-    fetch(target_url_absolute, { method: "HEAD" })
-      .then(function (response) {
+    // Check if same page exists in the target version
+    fetch(targetUrl, { method: "HEAD" })
+      .then((response) => {
         if (response.ok) {
-          window.location.href = target_url_absolute;
+          window.location.href = targetUrl;
         } else {
-          // page doesn't exist in the target version, go to homepage
-          window.location.href = target_href_absolute;
+          window.location.href = targetHref;
         }
       })
-      .catch(function (error) {
-        // network error or other failure - use homepage
-        window.location.href = target_href_absolute;
+      .catch(() => {
+        window.location.href = targetHref;
       });
   });
 
@@ -121,6 +105,7 @@ function maybeAddWarning() {
   document.body.appendChild(div);
 }
 
+// Run on DOM ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", maybeAddWarning);
 } else {
