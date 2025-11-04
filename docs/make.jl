@@ -114,5 +114,6 @@ else
         target="build",
         push_preview=true,
         devbranch="stay-on-page-with-workflow",
+        versions=["stable" => "v^", "v#.#"], # Restrict to minor releases
     )
 end
