@@ -77,6 +77,7 @@ makedocs(
         "Developers" => [
             "contributing.md",
             "checklists.md",
+            "test-new-feature.md",
             "Internals" => map(
                 s -> "lib/internals/$(s)",
                 sort(readdir(joinpath(@__DIR__, "src/lib/internals")))
