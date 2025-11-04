@@ -57,8 +57,6 @@ makedocs(
     authors="Michael Hatherly, Morten Piibeleht, and contributors.",
     linkcheck="linkcheck" in ARGS,
     linkcheck_ignore=linkcheck_ignore,
-    repo="github.com/JuliaDocs/Documenter.jl",
-    remotes=nothing,
     pages=[
         "Home" => "index.md",
         "Manual" => Any[
