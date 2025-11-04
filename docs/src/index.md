@@ -4,6 +4,8 @@
 
 A package for building documentation from docstrings and markdown files.
 
+<!-- Trigger CI -->
+
 !!! note
 
     Please read through the
