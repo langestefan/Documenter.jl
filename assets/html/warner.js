@@ -38,27 +38,34 @@ function maybeAddWarning() {
     document.body.removeChild(div);
   });
 
-  const target_href =
-    window.documenterBaseURL + "/../" + window.DOCUMENTER_STABLE + "/";
-
   // try to stay on the same page when switching versions
   // get the current page path relative to the version root
   var current_page = window.location.pathname;
 
   // resolve the documenterBaseURL to an absolute path
   // documenterBaseURL is a relative path (usually "."), so we need to resolve it
-  var base_url_absolute = new URL(documenterBaseURL, window.location.href)
-    .pathname;
+  // we need to resolve it from the document's URL, which might be a directory
+  var doc_url = window.location.href;
+  // if the URL is a directory (ends with /), append index.html for proper resolution
+  if (doc_url.endsWith("/")) {
+    doc_url = doc_url + "index.html";
+  }
+  var base_url_absolute = new URL(documenterBaseURL, doc_url).pathname;
   if (!base_url_absolute.endsWith("/")) {
     base_url_absolute = base_url_absolute + "/";
   }
 
   // extract the page path after the version directory
-  // e.g., if we're on /stable/man/guide.html, we want "man/guide.html"
+  // e.g., if we're on /dev/man/guide.html, we want "man/guide.html"
   var page_path = "";
   if (current_page.startsWith(base_url_absolute)) {
     page_path = current_page.substring(base_url_absolute.length);
   }
+
+  // construct target_href (base stable URL) as an absolute URL
+  var target_href_relative =
+    window.documenterBaseURL + "/../" + window.DOCUMENTER_STABLE + "/";
+  var target_href = new URL(target_href_relative, doc_url).href;
 
   // construct the target URL with the same page path
   var target_url = target_href;
@@ -69,10 +76,6 @@ function maybeAddWarning() {
     }
     target_url = target_url + "/" + page_path;
   }
-
-  // resolve target URLs to absolute URLs for fetch
-  var target_url_absolute = new URL(target_url, window.location.href).href;
-  var target_href_absolute = new URL(target_href, window.location.href).href;
 
   // Determine if this is a development version or an older release
   let warningMessage = "";
