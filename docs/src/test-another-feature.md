@@ -1,4 +1,4 @@
-# Test New Feature Page
+# Test Yet Another Feature Page
 
 !!! success "Version Selector Test Page"
     **This page only exists in the latest version (v1.15.0-test and newer)!**
