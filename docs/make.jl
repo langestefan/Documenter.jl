@@ -57,9 +57,6 @@ makedocs(
     authors="Michael Hatherly, Morten Piibeleht, and contributors.",
     linkcheck="linkcheck" in ARGS,
     linkcheck_ignore=linkcheck_ignore,
-    remotes=Dict(
-        DocumenterTools => (Documenter.Remotes.GitHub("JuliaDocs", "DocumenterTools.jl"), ),
-    ),
     pages=[
         "Home" => "index.md",
         "Manual" => Any[
