@@ -39,11 +39,19 @@ jobs:
           version: "1"
       - name: Use Julia cache
         uses: julia-actions/cache@v2
-      - name: Instantiate environment with development version of the package
+      - name: Instantiate environment with development version of the package and required doc tools
         run: |
           julia --project=docs -e '
             using Pkg
+            # develop the current package so docs pick up local source
             Pkg.develop(PackageSpec(path=pwd()))
+            # also develop DocumenterTools so it is available as a git checkout
+            # (prevents MissingRemoteError when generating source URLs)
+            try
+                Pkg.develop(PackageSpec(url="https://github.com/JuliaDocs/DocumenterTools.jl"))
+            catch e
+                @warn "could not develop DocumenterTools: $e"
+            end
             Pkg.instantiate()'
       - name: Generate and deploy documentation
         run: julia --project=docs docs/make.jl
