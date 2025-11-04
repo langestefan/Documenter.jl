@@ -38,34 +38,36 @@ function maybeAddWarning() {
     document.body.removeChild(div);
   });
 
-  // build the stable version URL - start with the base stable URL
-  const stableBaseUrl =
-    window.documenterBaseURL + "/../" + window.DOCUMENTER_STABLE;
+  const target_href =
+    window.documenterBaseURL + "/../" + window.DOCUMENTER_STABLE + "/";
 
   // try to stay on the same page when switching versions
-  const currentPath = window.location.pathname;
+  // get the current page path relative to the version root
+  var current_page = window.location.pathname;
 
   // resolve the documenterBaseURL to an absolute path
-  let baseUrl = new URL(window.documenterBaseURL, window.location.href)
+  // documenterBaseURL is a relative path (usually "."), so we need to resolve it
+  var base_url_absolute = new URL(documenterBaseURL, window.location.href)
     .pathname;
-  if (!baseUrl.endsWith("/")) {
-    baseUrl = baseUrl + "/";
+  if (!base_url_absolute.endsWith("/")) {
+    base_url_absolute = base_url_absolute + "/";
   }
 
   // extract the page path after the version directory
-  let pagePath = "";
-  if (currentPath.startsWith(baseUrl)) {
-    pagePath = currentPath.substring(baseUrl.length);
+  // e.g., if we're on /stable/man/guide.html, we want "man/guide.html"
+  var page_path = "";
+  if (current_page.startsWith(base_url_absolute)) {
+    page_path = current_page.substring(base_url_absolute.length);
   }
 
   // construct the target URL with the same page path
-  let stableUrl = stableBaseUrl;
-  if (pagePath && pagePath !== "" && pagePath !== "index.html") {
-    // remove trailing slash from stableBaseUrl if present
-    if (stableUrl.endsWith("/")) {
-      stableUrl = stableUrl.slice(0, -1);
+  var target_url = target_href;
+  if (page_path && page_path !== "" && page_path !== "index.html") {
+    // remove trailing slash from target_href if present
+    if (target_url.endsWith("/")) {
+      target_url = target_url.slice(0, -1);
     }
-    stableUrl = stableUrl + "/" + pagePath;
+    target_url = target_url + "/" + page_path;
   }
 
   // Determine if this is a development version or an older release
@@ -88,18 +90,18 @@ function maybeAddWarning() {
   link.addEventListener("click", function (event) {
     event.preventDefault();
     // check if the target page exists, fallback to homepage if it doesn't
-    fetch(stableUrl, { method: "HEAD" })
+    fetch(target_url, { method: "HEAD" })
       .then(function (response) {
         if (response.ok) {
-          window.location.href = stableUrl;
+          window.location.href = target_url;
         } else {
           // page doesn't exist in the target version, go to homepage
-          window.location.href = stableBaseUrl;
+          window.location.href = target_href;
         }
       })
       .catch(function (error) {
         // network error or other failure - use homepage
-        window.location.href = stableBaseUrl;
+        window.location.href = target_href;
       });
   });
 
