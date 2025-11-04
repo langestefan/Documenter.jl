@@ -109,8 +109,9 @@ if "pdf" in ARGS
     )
 else
     deploydocs(
-        repo="github.com/JuliaDocs/Documenter.jl.git",
+        repo="github.com/langestefan/Documenter.jl.git",
         target="build",
         push_preview=true,
+        devbranch="stay-on-page-with-workflow",
     )
 end
