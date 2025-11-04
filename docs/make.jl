@@ -57,6 +57,7 @@ makedocs(
     authors="Michael Hatherly, Morten Piibeleht, and contributors.",
     linkcheck="linkcheck" in ARGS,
     linkcheck_ignore=linkcheck_ignore,
+    remotes=nothing,
     pages=[
         "Home" => "index.md",
         "Manual" => Any[
@@ -84,7 +85,7 @@ makedocs(
         ],
         "release-notes.md",
     ],
-    warnonly=("strict=false" in ARGS) ? true : [:missing_docs],
+    warnonly=("strict=false" in ARGS),
     doctest=("doctest=only" in ARGS) ? :only : true,
 )
 
