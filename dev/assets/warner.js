@@ -70,6 +70,10 @@ function maybeAddWarning() {
     target_url = target_url + "/" + page_path;
   }
 
+  // resolve target URLs to absolute URLs for fetch
+  var target_url_absolute = new URL(target_url, window.location.href).href;
+  var target_href_absolute = new URL(target_href, window.location.href).href;
+
   // Determine if this is a development version or an older release
   let warningMessage = "";
   if (window.DOCUMENTER_IS_DEV_VERSION === true) {
@@ -84,24 +88,24 @@ function maybeAddWarning() {
 
   // create link element with click handler that checks if page exists
   const link = document.createElement("a");
-  link.href = "#";
+  link.href = target_href;
   link.textContent =
     "Click here to go to the documentation for the latest stable release.";
   link.addEventListener("click", function (event) {
     event.preventDefault();
     // check if the target page exists, fallback to homepage if it doesn't
-    fetch(target_url, { method: "HEAD" })
+    fetch(target_url_absolute, { method: "HEAD" })
       .then(function (response) {
         if (response.ok) {
-          window.location.href = target_url;
+          window.location.href = target_url_absolute;
         } else {
           // page doesn't exist in the target version, go to homepage
-          window.location.href = target_href;
+          window.location.href = target_href_absolute;
         }
       })
       .catch(function (error) {
         // network error or other failure - use homepage
-        window.location.href = target_href;
+        window.location.href = target_href_absolute;
       });
   });
 
